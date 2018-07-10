@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="搭建git服务器"><meta name="keywords" content="树莓派,Git"><meta name="author" content="kinokosu3,undefined"><meta name="copyright" content="kinokosu3"><title>搭建git服务器 | kinokosu3のblog</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.5.6"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.5.6"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  }
+} </script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Git"><span class="toc-number">1.</span> <span class="toc-text">安装Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立一个git用户"><span class="toc-number">2.</span> <span class="toc-text">建立一个git用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成公钥"><span class="toc-number">3.</span> <span class="toc-text">生成公钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置无密码ssh登录"><span class="toc-number">4.</span> <span class="toc-text">配置无密码ssh登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化git仓库"><span class="toc-number">5.</span> <span class="toc-text">初始化git仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#推送和克隆"><span class="toc-number">6.</span> <span class="toc-text">推送和克隆</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://avatars1.githubusercontent.com/u/10653502?s=400&amp;v=4"></div><div class="author-info__name text-center">kinokosu3</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">39</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">35</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">5</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(/img/1.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">kinokosu3のblog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签</a><a class="site-page" href="/categories">分类</a></span></div><div id="post-info"><div id="post-title">搭建git服务器</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2017-08-10</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/备忘录/">备忘录</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><hr>
+<p>因为自己的代码写的太难看，不太敢老是丢在github上，但是我又想有一个远程仓库，然后手上有一个树莓派，我们就可以用这个来搭建一个git服务器</p>
+<blockquote>
+<p>适合Ubuntu和debian</p>
+</blockquote>
+<h3 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sudo apt-get install git</span><br></pre></td></tr></table></figure>
+<h3 id="建立一个git用户"><a href="#建立一个git用户" class="headerlink" title="建立一个git用户"></a>建立一个git用户</h3><p>我们以后要用推送到远程仓库，需要使用这个账户使用git服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sudo useradd git</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="生成公钥"><a href="#生成公钥" class="headerlink" title="生成公钥"></a>生成公钥</h3><p>在用户文件夹路径下（/home/git/）输入命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ssh-keygen –t rsa</span><br></pre></td></tr></table></figure>
+<p>一路回车</p>
+<p>然后命令<code>ls -a</code> 查看是否有.ssh文件夹，进入</p>
+<h3 id="配置无密码ssh登录"><a href="#配置无密码ssh登录" class="headerlink" title="配置无密码ssh登录"></a>配置无密码ssh登录</h3><p>在/home/git/.ssh输入命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sudo vim authorized_keys</span><br></pre></td></tr></table></figure>
+<p>你会发现有两个文件id_rsa.pub和id_rsa，id_rsa.pub是公钥文件</p>
+<p>创建authorized_keys文件，然后将你的登录的机器的公钥放进去，你的公钥一样在.ssh文件夹的id_rsa.pub里</p>
+<p>然后我们重启试试能不能用git用户无密码登录</p>
+<h3 id="初始化git仓库"><a href="#初始化git仓库" class="headerlink" title="初始化git仓库"></a>初始化git仓库</h3><p>先选定一个目录作为git仓库，然后创建一个名为sample.git的git仓库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sudo git init --bare sample.git</span><br></pre></td></tr></table></figure>
+<p>在git里，–bare是创建一个裸仓库，服务器上的git仓库都以git结尾，然后我们修改权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sudo chown -R git:git sample.git</span><br></pre></td></tr></table></figure>
+<h3 id="推送和克隆"><a href="#推送和克隆" class="headerlink" title="推送和克隆"></a>推送和克隆</h3><p>如果我们要推送一个仓库到这个裸仓库，或者以后需要远程推送，我们就需要使用push命令</p>
+<p>如果是第一次推送，首先我们要关联一个远程库，也就是之前的裸仓库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git remote add origin git@地址:git仓库路径</span><br></pre></td></tr></table></figure>
+<p>添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库。</p>
+<p>然后我们就可以把本地库的内容推送的远程库上：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git push -u origin master</span><br></pre></td></tr></table></figure>
+<p>使用git push命令，其实是把当前分支master推送到远程上</p>
+<p>由于我们这是第一次推送仓库，远程库是空的，所以我们加上了<code>-u</code>参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来</p>
+<p>如果我们本体做了修改，我们就可以通过命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git push origin master</span><br></pre></td></tr></table></figure>
+<p>把本地master分支的最新修改推送到github</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">kinokosu3</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2017/08/10/搭建git服务器/">http://yoursite.com/2017/08/10/搭建git服务器/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">kinokosu3のblog</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/树莓派/">树莓派</a><a class="post-meta__tags" href="/tags/Git/">Git</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2017/08/10/Docker学习心得①/"><i class="fa fa-chevron-left">  </i><span>Docker学习心得①</span></a></div><div class="next-post pull-right"><a href="/2017/08/07/Docker学习纪录①/"><span>Docker学习纪录①</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2018 By kinokosu3</div><div class="framework-info"><span>驱动 - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.6"></script><script src="/js/fancybox.js?version=1.5.6"></script><script src="/js/sidebar.js?version=1.5.6"></script><script src="/js/copy.js?version=1.5.6"></script><script src="/js/fireworks.js?version=1.5.6"></script><script src="/js/transition.js?version=1.5.6"></script><script src="/js/scroll.js?version=1.5.6"></script><script src="/js/head.js?version=1.5.6"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
